@@ -7,7 +7,8 @@ import {
   Lock, 
   Loader2, 
   AlertCircle,
-  ArrowLeft
+  ArrowLeft,
+  CheckCircle2
 } from 'lucide-react';
 
 export default function LoginPage() {
@@ -17,14 +18,23 @@ export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setSuccessMessage(null);
 
     try {
+      const supabaseUrl = (import.meta as any).env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = (import.meta as any).env.VITE_SUPABASE_ANON_KEY;
+
+      if (!supabaseUrl || !supabaseAnonKey) {
+        throw new Error('Konfigurasi Supabase (URL/Key) tidak ditemukan. Silakan atur di panel Secrets.');
+      }
+
       if (isSignUp) {
         const { error: signUpError } = await supabase.auth.signUp({
           email,
@@ -36,7 +46,7 @@ export default function LoginPage() {
           },
         });
         if (signUpError) throw signUpError;
-        alert('Pendaftaran berhasil! Silakan cek email Anda untuk verifikasi atau langsung login jika auto-confirm aktif.');
+        setSuccessMessage('Pendaftaran berhasil! Silakan cek email Anda untuk verifikasi atau langsung login.');
         setIsSignUp(false);
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -62,10 +72,13 @@ export default function LoginPage() {
           <div className="absolute bottom-20 right-20 w-96 h-96 border-8 border-white rounded-full" />
         </div>
         
-        <Link to="/" className="flex items-center gap-2 font-bold text-2xl relative z-10 hover:text-sky-300 transition-colors">
+        <button 
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2 font-bold text-2xl relative z-10 hover:text-sky-300 transition-colors cursor-pointer"
+        >
           <School size={32} className="text-sky-400" />
           <span>HadirKu</span>
-        </Link>
+        </button>
 
         <div className="relative z-10">
           <h2 className="text-5xl font-black mb-6 leading-tight">
@@ -88,10 +101,13 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md">
           <div className="mb-10">
-            <Link to="/" className="md:hidden flex items-center gap-2 text-blue-900 font-bold text-xl mb-8">
+            <button 
+              onClick={() => navigate('/')}
+              className="md:hidden flex items-center gap-2 text-blue-900 font-bold text-xl mb-8 cursor-pointer"
+            >
               <School size={24} className="text-sky-500" />
               <span>HadirKu</span>
-            </Link>
+            </button>
             <h1 className="text-3xl font-black text-slate-900 mb-2">
               {isSignUp ? 'Buat Akun Baru' : 'Selamat Datang Kembali'}
             </h1>
@@ -106,6 +122,13 @@ export default function LoginPage() {
             <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-600 text-sm animate-shake">
               <AlertCircle size={18} className="shrink-0" />
               <p className="font-medium">{error}</p>
+            </div>
+          )}
+
+          {successMessage && (
+            <div className="mb-6 p-4 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-center gap-3 text-emerald-600 text-sm">
+              <CheckCircle2 size={18} className="shrink-0" />
+              <p className="font-medium">{successMessage}</p>
             </div>
           )}
 
@@ -194,10 +217,13 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-12 pt-8 border-t border-slate-100">
-            <Link to="/" className="inline-flex items-center gap-2 text-slate-400 hover:text-slate-600 font-bold text-sm transition-colors group">
+            <button 
+              onClick={() => navigate('/')}
+              className="inline-flex items-center gap-2 text-slate-400 hover:text-slate-600 font-bold text-sm transition-colors group cursor-pointer"
+            >
               <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
               Kembali ke Beranda
-            </Link>
+            </button>
           </div>
         </div>
       </div>

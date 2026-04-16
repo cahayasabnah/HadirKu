@@ -11,17 +11,18 @@ import TeacherAttendancePage from './pages/TeacherAttendance';
 import StudentAttendancePage from './pages/StudentAttendance';
 import RecapAttendancePage from './pages/RecapAttendance';
 import StudentDataPage from './pages/StudentData';
+import ProfilePage from './pages/ProfilePage';
 
 // Components
 import Layout from './components/Layout';
 
-function ProtectedRoute({ children, profile, loading }: { children: React.ReactNode, profile: Profile | null, loading: boolean }) {
+function ProtectedRoute({ children, session, loading }: { children: React.ReactNode, session: any, loading: boolean }) {
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50">
       <div className="w-16 h-16 border-4 border-blue-900 border-t-transparent rounded-full animate-spin" />
     </div>
   );
-  if (!profile) return <Navigate to="/login" />;
+  if (!session) return <Navigate to="/login" />;
   return <>{children}</>;
 }
 
@@ -31,6 +32,14 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const supabaseUrl = (import.meta as any).env.VITE_SUPABASE_URL;
+    const supabaseAnonKey = (import.meta as any).env.VITE_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      setLoading(false);
+      return;
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session) fetchProfile(session.user.id);
@@ -73,7 +82,7 @@ export default function App() {
         
         {/* App Routes */}
         <Route path="/app" element={
-          <ProtectedRoute profile={profile} loading={loading}>
+          <ProtectedRoute session={session} loading={loading}>
             <Layout profile={profile}>
               <Dashboard profile={profile} />
             </Layout>
@@ -81,7 +90,7 @@ export default function App() {
         } />
         
         <Route path="/app/absensi-guru" element={
-          <ProtectedRoute profile={profile} loading={loading}>
+          <ProtectedRoute session={session} loading={loading}>
             <Layout profile={profile}>
               <TeacherAttendancePage profile={profile} />
             </Layout>
@@ -89,7 +98,7 @@ export default function App() {
         } />
 
         <Route path="/app/absensi-siswa" element={
-          <ProtectedRoute profile={profile} loading={loading}>
+          <ProtectedRoute session={session} loading={loading}>
             <Layout profile={profile}>
               <StudentAttendancePage profile={profile} />
             </Layout>
@@ -97,7 +106,7 @@ export default function App() {
         } />
 
         <Route path="/app/rekap/guru" element={
-          <ProtectedRoute profile={profile} loading={loading}>
+          <ProtectedRoute session={session} loading={loading}>
             <Layout profile={profile}>
               {profile?.role === 'admin' ? <RecapAttendancePage type="guru" profile={profile} /> : <Navigate to="/app" />}
             </Layout>
@@ -105,7 +114,7 @@ export default function App() {
         } />
 
         <Route path="/app/rekap/siswa" element={
-          <ProtectedRoute profile={profile} loading={loading}>
+          <ProtectedRoute session={session} loading={loading}>
             <Layout profile={profile}>
               <RecapAttendancePage type="siswa" profile={profile} />
             </Layout>
@@ -113,9 +122,17 @@ export default function App() {
         } />
 
         <Route path="/app/data-siswa" element={
-          <ProtectedRoute profile={profile} loading={loading}>
+          <ProtectedRoute session={session} loading={loading}>
             <Layout profile={profile}>
               {profile?.role === 'admin' ? <StudentDataPage profile={profile} /> : <Navigate to="/app" />}
+            </Layout>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/app/profile" element={
+          <ProtectedRoute session={session} loading={loading}>
+            <Layout profile={profile}>
+              <ProfilePage profile={profile} />
             </Layout>
           </ProtectedRoute>
         } />

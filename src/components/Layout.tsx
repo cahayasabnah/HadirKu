@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   UserCheck, 
@@ -103,31 +103,31 @@ export default function Layout({ children, profile }: LayoutProps) {
                   {isRecapOpen && isSidebarOpen && (
                     <div className="ml-9 mt-1 space-y-1">
                       {item.submenu.map((sub) => (
-                        <Link
+                        <button
                           key={sub.name}
-                          to={sub.path}
+                          onClick={() => navigate(sub.path)}
                           className={cn(
-                            "block px-4 py-2 text-sm rounded-lg transition-colors",
+                            "w-full text-left px-4 py-2 text-sm rounded-lg transition-colors cursor-pointer",
                             location.pathname === sub.path ? "text-sky-300 font-semibold" : "text-blue-100 hover:text-white hover:bg-blue-600/30"
                           )}
                         >
                           {sub.name}
-                        </Link>
+                        </button>
                       ))}
                     </div>
                   )}
                 </div>
               ) : (
-                <Link
-                  to={item.path}
+                <button
+                  onClick={() => navigate(item.path)}
                   className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group",
+                    "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group cursor-pointer",
                     location.pathname === item.path ? "bg-sky-400/20 text-sky-300 shadow-sm" : "hover:bg-blue-600/50"
                   )}
                 >
                   <item.icon size={22} className={cn(isSidebarOpen ? "" : "mx-auto")} />
                   {isSidebarOpen && <span className="font-medium">{item.name}</span>}
-                </Link>
+                </button>
               )}
             </div>
           ))}

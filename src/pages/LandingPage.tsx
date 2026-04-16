@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { 
   School, 
   CheckCircle2, 
@@ -13,6 +13,8 @@ import {
 import { motion } from 'motion/react';
 
 export default function LandingPage() {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-white font-sans selection:bg-sky-200">
       {/* Navbar */}
@@ -22,12 +24,12 @@ export default function LandingPage() {
             <School className="w-10 h-10 text-sky-500" />
             <span>HadirKu</span>
           </div>
-          <Link 
-            to="/login" 
-            className="bg-blue-900 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-800 transition-all hover:shadow-lg hover:shadow-blue-200 active:scale-95"
+          <button 
+            onClick={() => navigate('/login')}
+            className="bg-blue-900 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-800 transition-all hover:shadow-lg hover:shadow-blue-200 active:scale-95 cursor-pointer"
           >
             Masuk ke Aplikasi
-          </Link>
+          </button>
         </div>
       </nav>
 
@@ -51,13 +53,13 @@ export default function LandingPage() {
               <b>HadirKu</b> adalah platform manajemen kehadiran modern yang dirancang untuk menyederhanakan proses absensi guru dan siswa. Tinggalkan cara lama, beralih ke efisiensi digital.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Link 
-                to="/login" 
-                className="bg-sky-500 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-sky-600 transition-all flex items-center gap-2 group"
+              <button 
+                onClick={() => navigate('/login')}
+                className="bg-sky-500 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-sky-600 transition-all flex items-center gap-2 group cursor-pointer"
               >
                 Mulai Sekarang
                 <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-              </Link>
+              </button>
               <a 
                 href="#fitur" 
                 className="bg-slate-100 text-slate-700 px-10 py-4 rounded-2xl font-bold text-lg hover:bg-slate-200 transition-all"
